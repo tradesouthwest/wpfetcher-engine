@@ -1,0 +1,77 @@
+<?php
+/**
+ * Custom Post Type Registrar Component.
+ * Optimized, zero-bloat template container engineered by WPFetcher.com
+ *
+ * Plugin Name:       {{PLUGIN_NAME}}
+ * Prefix / Namespace: {{CUSTOM_PREFIX}}
+ * Text Domain:       {{TEXT_DOMAIN}}
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+if ( ! class_exists( '{{CUSTOM_PREFIX}}_CPT_Registrar' ) ) {
+
+    class {{CUSTOM_PREFIX}}_CPT_Registrar {
+
+        /**
+         * Initialize code hook sequences.
+         */
+        public function __construct() {
+            add_action( 'init', array( $this, 'register_custom_post_type' ) );
+        }
+
+        /**
+         * Orchestrate post type configuration rules parameters.
+         */
+        public function register_custom_post_type() {
+            
+            // Programmatically establish human-readable display string markers
+            $singular = 'Portfolio Item';
+            $plural   = 'Portfolio';
+            $slug     = 'portfolio';
+
+            $labels = array(
+                'name'               => _x( $plural, 'post type general name', '{{TEXT_DOMAIN}}' ),
+                'singular_name'      => _x( $singular, 'post type singular name', '{{TEXT_DOMAIN}}' ),
+                'menu_name'          => _x( $plural, 'admin menu', '{{TEXT_DOMAIN}}' ),
+                'name_admin_bar'     => _x( $singular, 'add new on admin bar', '{{TEXT_DOMAIN}}' ),
+                'add_new'            => _x( 'Add New', 'item', '{{TEXT_DOMAIN}}' ),
+                'add_new_item'       => __( 'Add New ' . $singular, '{{TEXT_DOMAIN}}' ),
+                'new_item'           => __( 'New ' . $singular, '{{TEXT_DOMAIN}}' ),
+                'edit_item'          => __( 'Edit ' . $singular, '{{TEXT_DOMAIN}}' ),
+                'view_item'          => __( 'View ' . $singular, '{{TEXT_DOMAIN}}' ),
+                'all_items'          => __( 'All ' . $plural, '{{TEXT_DOMAIN}}' ),
+                'search_items'       => __( 'Search ' . $plural, '{{TEXT_DOMAIN}}' ),
+                'parent_item_colon'  => __( 'Parent ' . $singular . ':', '{{TEXT_DOMAIN}}' ),
+                'not_found'          => __( 'No ' . strtolower($plural) . ' found.', '{{TEXT_DOMAIN}}' ),
+                'not_found_in_trash' => __( 'No ' . strtolower($plural) . ' found in Trash.', '{{TEXT_DOMAIN}}' ),
+            );
+
+            $args = array(
+                'labels'             => $labels,
+                'public'             => true,
+                'publicly_queryable' => true,
+                'show_ui'            => true,
+                'show_in_menu'       => true,
+                'query_var'          => true,
+                'rewrite'            => array( 'slug' => $slug, 'with_front' => false ),
+                'capability_type'    => 'post',
+                'has_archive'        => true,
+                'hierarchical'       => false,
+                'menu_position'      => 25,
+                'menu_icon'          => 'dashicons-portfolio', // Extensible standard icon font string map
+                'show_in_rest'       => true, // Secure native Gutenberg Block Editor layout support injection
+                'supports'           => array( 'title', 'editor', 'thumbnail', 'excerpt', 'custom-fields' ),
+                'taxonomies'         => array(),
+            );
+
+            register_post_type( $slug, $args );
+        }
+    }
+
+    // Instantiate tokenized component safely on hook bounds processing lifecycle
+    new {{CUSTOM_PREFIX}}_CPT_Registrar();
+}

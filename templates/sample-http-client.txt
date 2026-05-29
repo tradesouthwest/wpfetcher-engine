@@ -1,0 +1,108 @@
+<?php
+/**
+ * Lightweight HTTP Client Wrapper Component.
+ * Optimized, zero-bloat template container engineered by WPFetcher.com
+ *
+ * Plugin Name:       {{PLUGIN_NAME}}
+ * Prefix / Namespace: {{CUSTOM_PREFIX}}
+ * Text Domain:       {{TEXT_DOMAIN}}
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+if ( ! class_exists( '{{CUSTOM_PREFIX}}_HTTP_Client' ) ) {
+
+    class {{CUSTOM_PREFIX}}_HTTP_Client {
+
+        /**
+         * The base API endpoint URL string reference.
+         * @var string
+         */
+        private $base_url;
+
+        /**
+         * System default configuration args.
+         * @var array
+         */
+        private $default_args;
+
+        /**
+         * Construct the client wrapper with target parameters.
+         */
+        public function __construct( $base_url = '', $default_args = array() ) {
+            $this->base_url     = trailingslashit( $base_url );
+            $this->default_args = wp_parse_args( $default_args, array(
+                'timeout'   => 15,
+                'user-agent' => '{{CUSTOM_PREFIX}}-Engine/1.0.0 ({{TEXT_DOMAIN}})',
+                'headers'    => array(
+                    'Content-Type' => 'application/json',
+                    'Accept'       => 'application/json',
+                ),
+            ) );
+        }
+
+        /**
+         * Safe remote GET operations with built-in transient cache routing.
+         *
+         * @param string $endpoint The target endpoint path.
+         * @param int    $ttl      Transient expiration time in seconds. Defaults to 0 (no cache).
+         * @return array|bool      Parsed JSON data array on success, false on failure states.
+         */
+        public function get( $endpoint, $ttl = 0 ) {
+            $endpoint   = ltrim( $endpoint, '/' );
+            $target_url = $this->base_url . $endpoint;
+            
+            // Establish a deterministic transient key lookup map string
+            $transient_key = '{{CUSTOM_PREFIX}}_http_' . md5( $target_url );
+
+            if ( $ttl > 0 ) {
+                $cached_response = get_transient( $transient_key );
+                if ( false !== $cached_response ) {
+                    return $cached_response;
+                }
+            }
+
+            $response = wp_remote_get( $target_url, $this->default_args );
+
+            if ( is_wp_error( $response ) ) {
+                return false;
+            }
+
+            $body = wp_remote_retrieve_body( $response );
+            $data = json_decode( $body, true );
+
+            if ( empty( $data ) ) {
+                return false;
+            }
+
+            if ( $ttl > 0 ) {
+                set_transient( $transient_key, $data, $ttl );
+            }
+
+            return $data;
+        }
+
+        /**
+         * Performance-optimized remote POST execution handler routing.
+         */
+        public function post( $endpoint, $payload = array() ) {
+            $endpoint   = ltrim( $endpoint, '/' );
+            $target_url = $this->base_url . $endpoint;
+
+            $execution_args = $this->default_args;
+            $execution_args['body'] = json_encode( $payload );
+            $execution_args['method'] = 'POST';
+
+            $response = wp_remote_post( $target_url, $execution_args );
+
+            if ( is_wp_error( $response ) ) {
+                return false;
+            }
+
+            $body = wp_remote_retrieve_body( $response );
+            return json_decode( $body, true );
+        }
+    }
+}

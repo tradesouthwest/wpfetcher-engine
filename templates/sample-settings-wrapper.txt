@@ -1,0 +1,24 @@
+<?php
+/**
+ * Plugin Name:       {{CUSTOM_NAME}}
+ * Prefix / Namespace: {{CUSTOM_PREFIX}}
+ * Text Domain:       {{TEXT_DOMAIN}}
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+class {{CUSTOM_PREFIX}}_Settings_API {
+
+    private $text_domain = '{{TEXT_DOMAIN}}';
+
+    public function __construct() {
+        // Initialization code for {{CUSTOM_NAME}}
+        add_action( 'admin_init', array( $this, 'register_settings' ) );
+    }
+
+    public function register_settings() {
+        // Deterministic settings wrapper template
+    }
+}
